@@ -182,6 +182,14 @@ app.use( async (req, res, next) => {
 });
 
 // all routes below now have a 'req.current_user' defined
-app.get('/current_user', (req, res) => {
-    res.json(req.current_user);
+// app.get('/current_user', (req, res) => {
+//     res.json(req.current_user);
+// });
+
+app.get('/users/profile', (req, res) => {
+
+    console.log(req.headers.authorization);
+    // get the user id from the token
+    // MongoDb to get user's info
+    // res.send to frontend
 });
