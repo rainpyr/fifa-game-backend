@@ -54,7 +54,7 @@ const checkAuth = () => {
     });
 }; // checkAuth()
 
-
+// console.log('checkAuth', checkAuth())
 
 const SERVER_SECRET_KEY = 'YourChicken';
 
@@ -124,62 +124,64 @@ app.post('/games', async (req, res) => {
 
 // login route
 
-// app.post('/login', async (req, res) => {
-//     console.log('login:', req.body);
+app.post('/login', async (req, res) => {
+    console.log('login:', req.body);
     
-//     const {email, password } = req.body;
-//     try {
-//         const user = await User.findOne({email: email}); // const email = req.body.email ....
-//         if(user && bcrypt.compareSync(password, user.passwordDigest)){
-//             // correct credentials
-//             // res.json({sucess: true})
-//             const token = jwt.sign(
-//                 // the data to encode in the 'payload':
-//                 {_id: user._id},
+    const {email, password } = req.body;
+    try {
+        const user = await User.findOne({email: email}); // const email = req.body.email ....
+        if(user && bcrypt.compareSync(password, user.passwordDigest)){
+            // correct credentials
+            // res.json({sucess: true})
+            const token = jwt.sign(
+                // the data to encode in the 'payload':
+                {_id: user._id},
                 
-//                 SERVER_SECRET_KEY,
-//                 {expiresIn: '72h'}  // 3 days
-//             );
-//             res.json({token}); 
+                SERVER_SECRET_KEY,
+                {expiresIn: '72h'}  // 3 days
+            );
+            console.log(token);
+            res.json({token}); 
+            
 
-//         } else {
-//             // incorrect credentials: user not found
-//             res.status(401).json({sucess: false}); // unauthorised
-//         }
+        } else {
+            // incorrect credentials: user not found
+            res.status(401).json({sucess: false}); // unauthorised
+        }
 
-//     } catch(err){
-//         console.log('Error verifying login credentials:', err);
+    } catch(err){
+        console.log('Error verifying login credentials:', err);
         
-//         res.sendStatus(500); // low-level error 
+        res.sendStatus(500); // low-level error 
 
 
-//     }
+    }
     
 
-// }); // POST /login
+}); // POST /login
 
 
-// app.use(checkAuth());
+app.use(checkAuth());
 
 // // Custom middleware
-// app.use( async (req, res, next) => {
+app.use( async (req, res, next) => {
 
-//     try {
-//         const user = await User.findOne({_id: req.auth._id});
-//         if(user === null) {
-//             res.sendStatus(401); // invalid/stale token
-//             // note that byrunning a response method here
-//         } else {
-//             req.current_user = user;
-//             next();
-//         }
+    try {
+        const user = await User.findOne({_id: req.auth._id});
+        if(user === null) {
+            res.sendStatus(401); // invalid/stale token
+            // note that byrunning a response method here
+        } else {
+            req.current_user = user;
+            next();
+        }
 
-//     } catch(err) {
-//         res.sendStatus(500);
-//     }
-// });
+    } catch(err) {
+        res.sendStatus(500);
+    }
+});
 
-// // all routes below now have a 'req.current_user' defined
-// app.get('/current_user', (req, res) => {
-//     res.json(req.current_user);
-// });
+// all routes below now have a 'req.current_user' defined
+app.get('/current_user', (req, res) => {
+    res.json(req.current_user);
+});
